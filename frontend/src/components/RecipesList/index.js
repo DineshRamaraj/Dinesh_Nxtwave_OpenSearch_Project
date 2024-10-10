@@ -19,7 +19,7 @@ const RecipesList = ({ titleInput }) => {
     setLoading(true);
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/recipes/filter?title=${titleInput}&page=${pageNo}&size=${perPageSize}`
+        `https://dinesh-api-opensearch.onrender.com/api/recipes/filter?title=${titleInput}&page=${pageNo}&size=${perPageSize}`
       );
       console.log(response);
       const updatedData = response.data.data.map((eachData) => ({

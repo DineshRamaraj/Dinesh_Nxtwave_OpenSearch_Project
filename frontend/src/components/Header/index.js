@@ -1,5 +1,5 @@
 import React from "react";
-import { FaList } from "react-icons/fa";
+// import { FaList } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 const Header = ({ showSidebar, setShowSidebar }) => {

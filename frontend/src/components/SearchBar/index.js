@@ -19,7 +19,7 @@ const SearchBar = ({ setTitleInput }) => {
     setLoading(true);
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/recipes/search?search_q=${searchInput}`
+        `https://dinesh-api-opensearch.onrender.com/api/recipes/search?search_q=${searchInput}`
       );
       // console.log(response);
       const updatedData = response.data.map((eachDocument) => ({
