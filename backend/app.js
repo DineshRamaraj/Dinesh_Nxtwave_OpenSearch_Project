@@ -4,10 +4,12 @@ const fs = require("fs");
 const csv = require("csv-parser");
 const { Client } = require("@opensearch-project/opensearch");
 const dotenv = require("dotenv");
+const cors = require("cors");
 dotenv.config();
 
 const app = express();
 app.use(bodyParser.json());
+app.use(cors());
 
 const client = new Client({
   node: "https://search-opensearchlearning-dwownbaww4z7oobasanhzcqfxe.aos.ap-south-1.on.aws", // AWS domain
@@ -17,16 +19,16 @@ const client = new Client({
   },
 });
 
-async function deleteIndex() {
-    try {
-        await client.indices.delete({
-            index: "recipes"
-        })
-        console.log("Index Delete Successfully");
-    } catch (error) {
-        console.log("We have Some Error deleting Index", error);
-    }
-}
+// async function deleteIndex() {
+//   try {
+//     await client.indices.delete({
+//       index: "recipes",
+//     });
+//     console.log("Index Delete Successfully");
+//   } catch (error) {
+//     console.log("We have Some Error deleting Index", error);
+//   }
+// }
 
 // Create the index for epirecipe
 async function createIndex() {
@@ -67,13 +69,13 @@ async function indexData() {
       // console.log(row);
       const doc = {
         title: row.title || "No Title Provided",
-        calories: row.calories || '0',
-        protein: row.protein || '0',
-        rating: parseFloat(row.rating) || '0',
-        fat: row.fat || '0',
-        sodium: row.sodium || '0',
+        calories: row.calories || "0",
+        protein: row.protein || "0",
+        rating: parseFloat(row.rating) || "0",
+        fat: row.fat || "0",
+        sodium: row.sodium || "0",
       };
-    //   console.log("djslkjlfk", doc);
+      //   console.log("djslkjlfk", doc);
       // if(!row.ingredients || !row.instructions || !row.categories){
       //     console.log("row Data: ", count);
       // }
@@ -96,7 +98,7 @@ async function indexData() {
         await client.bulk({ body: bulkOps });
       }
       console.log("CSV file successfully processed and data indexed!");
-    //   console.log(bulkOps[0], bulkOps[3]);
+      //   console.log(bulkOps[0], bulkOps[1]);
     })
     .on("error", (error) => {
       console.error("Error reading CSV file:", error);
@@ -111,10 +113,27 @@ createIndex()
 // I need to re-index process for delete one time and after call createIndex();
 // deleteIndex();
 
-
+app.post("/api/recipes/search", async (req, res) => {
+  const { search_q = "" } = req.query;
+  try {
+    const response = await client.search({
+      index: "recipes",
+      body: {
+        query: {
+          wildcard: {
+            title: `*${search_q}*`,
+          },
+        },
+      },
+      from: 0,
+      size: 10,
+    });
+    res.status(200).json(response.body.hits.hits);
+  } catch (error) {}
+});
 
 app.post("/api/recipes/filter", async (req, res) => {
-  const { title = "", page = 1, size = 10 } = req.query;
+  const { title = "", page = 1, size = 1000 } = req.query;
 
   try {
     const response = await client.search({
@@ -129,8 +148,12 @@ app.post("/api/recipes/filter", async (req, res) => {
         size: size,
       },
     });
-
-    res.status(200).json({data: response.body.hits.hits, total: response.body.hits.hits.length});
+    const totalDocuments = response.body.hits.total.value;
+    // console.log(totalDocuments);
+    res.status(200).json({
+      data: response.body.hits.hits,
+      total:totalDocuments
+    });
   } catch (error) {
     console.error("Error filtering recipes:", error);
     res.status(500).json({ error: "Failed to filter recipes" });
