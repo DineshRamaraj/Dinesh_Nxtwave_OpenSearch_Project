@@ -16,12 +16,12 @@ const Header = ({ showSidebar, setShowSidebar }) => {
         </div>
       </Link>
 
-      <div
+      {/* <div
         className="flex md:hidden text-slate-800 px-3 py-2 bg-slate-300 rounded-lg cursor-pointer shadow-lg"
         onClick={() => setShowSidebar(!showSidebar)}
       >
         <FaList />
-      </div>
+      </div> */}
       {/* <div className="hidden md:flex text-white gap-4 font-[Roboto] "> 
         <NavLink
           to="/"

@@ -12,10 +12,10 @@ app.use(bodyParser.json());
 app.use(cors());
 
 const client = new Client({
-  node: "https://search-opensearchlearning-dwownbaww4z7oobasanhzcqfxe.aos.ap-south-1.on.aws", // AWS domain
+  node: process.env.AWSURL, // AWS OpenSearch domain
   auth: {
-    username: "Dineshkumar",
-    password: "Dinesh@123",
+    username: process.env.AWSUSERNAME, // AWS OpenSearch Username
+    password: process.env.AWSPASSWORD, // AWS OpenSearch Password
   },
 });
 
