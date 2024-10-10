@@ -35,7 +35,7 @@ const SearchBar = ({ setTitleInput }) => {
 
   useEffect(() => {
     getRecipesList();
-  }, [searchInput]);
+  }, [searchInput, isSearch]);
 
   return (
     <div className="w-full max-w-[500px]">
@@ -62,10 +62,12 @@ const SearchBar = ({ setTitleInput }) => {
       )}
       {recipeListData.length === 0 && !loading && (
         <div className="w-full h-[150px] flex flex-col justify-center items-center font-[roboto]">
-          <span className="text-[24px] font-[Roboto] text-slate-800">No Search Result Found</span>
-      </div>
+          <span className="text-[24px] font-[Roboto] text-slate-800">
+            No Search Result Found
+          </span>
+        </div>
       )}
-      {!loading && isSearch && (
+      {!loading && isSearch && searchInput.length > 0 && (
         <ul className="w-full px-1">
           {recipeListData.map((eachData) => (
             <li
@@ -77,7 +79,7 @@ const SearchBar = ({ setTitleInput }) => {
                 } else {
                   setTitleInput(eachData.title.slice(0, 20));
                 }
-                setSearchInput('');
+                setSearchInput("");
                 setIsSearch(false);
               }}
             >
